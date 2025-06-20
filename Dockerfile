@@ -1,14 +1,16 @@
-# Build stage
+# Stage 1: Build
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /app
 
+# Copy and restore
 COPY *.csproj ./
 RUN dotnet restore
 
+# Copy rest and publish
 COPY . ./
 RUN dotnet publish -c Release -o out
 
-# Runtime stage
+# Stage 2: Runtime
 FROM mcr.microsoft.com/dotnet/aspnet:7.0
 WORKDIR /app
 COPY --from=build /app/out .
