@@ -2,12 +2,14 @@
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /app
 
-# Copy and restore
-COPY *.csproj ./
+# Copy csproj and restore
+COPY SampleBackend.csproj ./
 RUN dotnet restore
 
-# Copy rest and publish
+# Copy all source code
 COPY . ./
+
+# Publish app
 RUN dotnet publish -c Release -o out
 
 # Stage 2: Runtime
@@ -17,3 +19,4 @@ COPY --from=build /app/out .
 
 EXPOSE 80
 ENTRYPOINT ["dotnet", "SampleBackend.dll"]
+
