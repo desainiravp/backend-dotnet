@@ -14,6 +14,7 @@ variables:
 
 stages:
   - build_and_push
+  - deploy
 
 build_and_push:
   stage: build_and_push
@@ -22,3 +23,20 @@ build_and_push:
     - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_REGISTRY
     - docker build -t "$IMAGE_TAG" .
     - docker push "$IMAGE_TAG"
+
+deploy-to-eks:
+  stage: deploy
+  image: amazonlinux:2
+  before_script:
+    - yum install -y unzip curl git tar gzip python3 pip
+    - curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+    - unzip awscliv2.zip && ./aws/install
+    - curl -LO https://dl.k8s.io/release/v1.32.3/bin/linux/amd64/kubectl
+    - chmod +x kubectl && mv kubectl /usr/local/bin/
+    - kubectl version --client
+    - aws eks --region "$AWS_REGION" update-kubeconfig --name "$CLUSTER_NAME"
+  script:
+    - echo "Deploying to EKS..."
+    - kubectl apply --validate=false -f k8s/
+    - kubectl get all
+
