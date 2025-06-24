@@ -15,5 +15,6 @@ spec:
       containers:
         - name: backend
           image: 703671925616.dkr.ecr.ap-south-1.amazonaws.com/backend-dotnet:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 80
