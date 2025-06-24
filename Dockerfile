@@ -1,5 +1,5 @@
 # Stage 1: Build the application
-FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:3.1 AS build
 WORKDIR /app
 
 # Copy the project file and restore dependencies
